@@ -1,0 +1,35 @@
+name: Unzip Azmir-clean
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Azmir-clean.zip'
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Unzip Azmir-clean.zip
+        run: |
+          if [ ! -f Azmir-clean.zip ]; then
+            echo "Azmir-clean.zip root-এ পাওয়া যায়নি।"
+            exit 0
+          fi
+          unzip -q -o Azmir-clean.zip -d .
+          rm -f Azmir-clean.zip
+          ls -la
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Unzip Azmir-clean.zip" || echo "Nothing to commit"
+          git push
