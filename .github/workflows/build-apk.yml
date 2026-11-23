@@ -14,14 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+
+      - name: Setup pnpm
+        run: |
+          npm install -g pnpm@10
+          pnpm -v
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -29,8 +30,14 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Check project files
+        run: |
+          ls -la
+          test -f package.json || (echo "package.json root-এ নেই! ফাইল ভুল ফোল্ডারে আছে।" && exit 1)
+
       - name: Install dependencies
         run: |
+          npm pkg delete packageManager
           pnpm install --no-frozen-lockfile
           pnpm add -D @capacitor/core @capacitor/cli @capacitor/android
 
